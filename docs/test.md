@@ -9,6 +9,7 @@
   </head>
   <body>
     <div id="main">
+      <p>A simple test using Noisy. You can find its code in docs folder under the git repository.</p>
       <canvas class="visualizer"></canvas> 
     </div>
 
