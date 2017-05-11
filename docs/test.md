@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -13,7 +12,7 @@
       <canvas class="visualizer"></canvas> 
     </div>
 
-    <script type="text/javascript" src="noisy.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/fabiogoro/noisy/master/noisy.min.js"></script>
     <script type="text/javascript" src="assets/script.js"></script>
   </body>
 </html>
