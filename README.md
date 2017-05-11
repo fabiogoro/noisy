@@ -28,7 +28,7 @@ If you make upper bound greater than Nyquist frequency (sampleRate/2), it'll be 
 
 When creating `Noisy()` object, the argument is an AudioContext object. If nothing is passed, an exception is thrown.
 
-Don't forget to include the lib in your project. The minified version can be downloaded [here]().
+Don't forget to include the lib in your project. The minified version can be downloaded [here](https://raw.githubusercontent.com/fabiogoro/noisy/master/noisy.min.js).
 
 ## License
 
