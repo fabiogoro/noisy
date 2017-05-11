@@ -20,6 +20,8 @@ If and only if this is what you're looking for, I recommend it to you.
   node.stop(2);
 ```
 
+A sample application can be seen [here](https://fabiogoro.github.io/noisy/test)
+
 First argument of `createNoise` is the lower bound, second is the upper bound.
 By this I mean: lowest frequency (in Hz) present in the spectrum will be first argument, highest frequency (in Hz) is second argument.
 
