@@ -1,4 +1,5 @@
 var audio_context;
+var n;
 var gain;
 var destination;
 var canvas;
@@ -22,11 +23,20 @@ function start_web_audio(){
   master_gain.connect(audio_context.destination);
   
   // Create Noisy node...
-  var n = new Noisy(audio_context); 
-  var node = n.createNoise(100,1000);
-  node.start(); 
-  node.connect(destination);
-  node.stop(2);
+  n = new Noisy(audio_context); 
+  beat(440,3200,1); // This function creates noise in a range of the spectrum for a short time.
+  harmonic(440,1); // This function uses Noisy as an oscillator, making only one bin active.
+  beat(440,1320,1.5);
+  beat(440,3200,2);
+  harmonic(493.88,2);
+  beat(493.88,1320,2.5);
+  beat(493.88,3200,3);
+  harmonic(554.37,3);
+  beat(554.37,1320,3.5);
+  beat(554.37,3200,4);
+  harmonic(587.33,4);
+  beat(587.33,1320,4.5);
+  beat(587.33,3200,5);
 
   // Draw spectrum...
   analyser = audio_context.createAnalyser();
@@ -43,6 +53,28 @@ function start_web_audio(){
   canvas.fillRect(0, 0, WIDTH, HEIGHT);
 
   draw();
+}
+
+function beat(l, h, t){
+  var b = n.createNoise(l,h); // Create the node.
+  b.start(t); // Make it play
+  b.connect(destination); // Connect it, just like a regular node.
+  b.stop(t+0.25);
+}
+
+function harmonic(hz, t){
+  var h1 = n.createNoise(hz);
+  var h2 = n.createNoise(hz*2);
+  var h3 = n.createNoise(hz*3);
+  h1.start(t); 
+  h1.connect(destination);
+  h1.stop(t+1);
+  h2.start(t); 
+  h2.connect(destination);
+  h2.stop(t+1);
+  h3.start(t); 
+  h3.connect(destination);
+  h3.stop(t+1);
 }
 
 function draw() {
