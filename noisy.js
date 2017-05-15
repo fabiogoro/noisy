@@ -4,10 +4,10 @@ function Noisy(audio_context){
   this._size = 65536;
   this._fft = new FFTJS(this._size);
 }
-
 Noisy.prototype.createNoise = function (bottom, top, gain){
   const spectrum = this._noise_spectrum(bottom, top, gain);
-  var block = this._noise_block(spectrum);
+  var block = new Float32Array(this._size);
+  block.set(this._noise_block(spectrum));
   return this._noise_node(block);
 }
 
@@ -63,9 +63,8 @@ Noisy.prototype._noise_block = function (spectrum){
 
 Noisy.prototype._noise_node = function (block){
   const audio_context = this.audio_context;
-  const size = this._size;
   var noise_node = audio_context.createBufferSource();
-  var noise_buffer = audio_context.createBuffer(1, size, audio_context.sampleRate);
+  var noise_buffer = audio_context.createBuffer(1, block.length, audio_context.sampleRate);
   noise_buffer.copyToChannel(block,0);
   noise_node.buffer = noise_buffer;
   noise_node.loop = true;

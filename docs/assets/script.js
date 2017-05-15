@@ -17,7 +17,7 @@ function start_web_audio(){
   master_gain = audio_context.createGain();
   compressor = audio_context.createDynamicsCompressor();
   compressor.connect(gain);
-  gain.gain.value = 1;
+  gain.gain.value = 0;
   gain.connect(master_gain);
   destination = gain;//compressor;
   master_gain.connect(audio_context.destination);
@@ -36,6 +36,7 @@ function start_web_audio(){
   node = n.createNoise();
   node.connect(destination);
   node.start(5);
+  gain.gain.linearRampToValueAtTime(1,5.05);
 
   // Draw spectrum...
   analyser = audio_context.createAnalyser();
@@ -57,8 +58,11 @@ function start_web_audio(){
 function beat(l, h, t){
   var b = n.createNoise(l,h); // Create the node.
   b.start(t); // Make it play
+  gain.gain.linearRampToValueAtTime(1,t+0.05);
+  gain.gain.linearRampToValueAtTime(0.2,t+0.15);
+  gain.gain.linearRampToValueAtTime(0,t+0.50);
   b.connect(destination); // Connect it, just like a regular node.
-  b.stop(t+0.25);
+  b.stop(t+0.50);
 }
 
 function harmonic(hz, t){
