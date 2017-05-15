@@ -19,24 +19,23 @@ function start_web_audio(){
   compressor.connect(gain);
   gain.gain.value = 1;
   gain.connect(master_gain);
-  destination = compressor;
+  destination = gain;//compressor;
   master_gain.connect(audio_context.destination);
   
   // Create Noisy node...
   n = new Noisy(audio_context); 
   beat(440,3200,1); // This function creates noise in a range of the spectrum for a short time.
-  harmonic(440,1); // This function uses Noisy as an oscillator, making only one bin active.
-  beat(440,1320,1.5);
-  beat(440,3200,2);
-  harmonic(493.88,2);
-  beat(493.88,1320,2.5);
-  beat(493.88,3200,3);
-  harmonic(554.37,3);
-  beat(554.37,1320,3.5);
-  beat(554.37,3200,4);
-  harmonic(587.33,4);
-  beat(587.33,1320,4.5);
-  beat(587.33,3200,5);
+  //harmonic(440,1); // This function uses Noisy as an oscillator, making only one bin active.
+  beat(440,440*3,1.5);
+  beat(440,440*6,2);
+  beat(493.88,493.88*3,2.5);
+  beat(493.88,493.88*6,3);
+  beat(554.37,554.37*3,3.5);
+  beat(554.37,554.37*6,4);
+  beat(587.33,587.33*3,4.5);
+  node = n.createNoise();
+  node.connect(destination);
+  node.start(5);
 
   // Draw spectrum...
   analyser = audio_context.createAnalyser();

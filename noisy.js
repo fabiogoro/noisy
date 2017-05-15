@@ -5,8 +5,8 @@ function Noisy(audio_context){
   this._fft = new FFTJS(this._size);
 }
 
-Noisy.prototype.createNoise = function (bottom, top){
-  const spectrum = this._noise_spectrum(bottom, top);
+Noisy.prototype.createNoise = function (bottom, top, gain){
+  const spectrum = this._noise_spectrum(bottom, top, gain);
   var block = this._noise_block(spectrum);
   return this._noise_node(block);
 }
@@ -15,11 +15,15 @@ Noisy.prototype.freqbin = function (hz){
   return Math.round(hz*this._size/audio_context.sampleRate);
 }
 
-Noisy.prototype._noise_spectrum = function (bottom, top){
+Noisy.prototype._noise_spectrum = function (bottom, top, gain){
   const audio_context = this.audio_context;
+  if(bottom===undefined && top===undefined){
+    bottom=0; top=audio_context.sampleRate/2;
+  }
+  if(gain===undefined) gain = 0.1;
   if(bottom===undefined || bottom < 0) bottom = 0;
-  if(top===undefined || top > audio_context.sampleRate/2) top = bottom;
-  if(bottom>top) throw new Error('Arg1 is greater than Arg2.');
+  if(top===undefined || bottom > top) top = bottom;
+  if(top > audio_context.sampleRate/2) top = audio_context.sampleRate/2;
   const size = this._size;
   const fft = this._fft;
   const out = fft.createComplexArray();
@@ -28,18 +32,20 @@ Noisy.prototype._noise_spectrum = function (bottom, top){
   var norm = 0;
   out.fill(0);
   for (var i = bottom_bin; i <= top_bin; i++) {
-    // bins 0 and size/2+1
     var rand = Math.random()-0.5;
-    if(i==0 || i==size/2) out[2*i]=2*rand;
+    if(i==0 || i==size/2) {
+      out[2*i]=2*rand;
+      norm += Math.pow(2*rand,2);
+    }
     else {
       out[2*i] = rand;
       out[2*size-2*(i-1)-2] = rand;
+      norm += Math.pow(2*rand,2);
     }
-    norm += rand*rand;
   }
-  var n = 2*Math.sqrt(norm)/size;
+  var n = 1/gain*Math.sqrt(norm)/size;
   for (var i = bottom_bin; i <= top_bin; i++) {
-    if(i==0) out[i] /= n;
+    if(i==0 || i==size/2) out[2*i] /= n;
     else {
       out[2*i] /= n;
       out[2*size-2*(i-1)-2] /= n;

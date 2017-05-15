@@ -20,10 +20,10 @@ If and only if this is what you're looking for, I recommend it to you.
   node.stop(2);
 ```
 
-A sample application can be seen [here](https://fabiogoro.github.io/noisy/test)
+A sample application can be seen [here](https://fabiogoro.github.io/noisy/sample)
 
 First argument of `createNoise` is the lower bound, second is the upper bound.
-By this I mean: lowest frequency (in Hz) present in the spectrum will be first argument, highest frequency (in Hz) is second argument.
+By this I mean: lowest frequency (in Hz) present in the spectrum will be first argument, highest frequency (in Hz) will be second.
 
 If you let `createNoise` without parameters it will be plain white noise.
 If you make lower bound less than 0, it'll be set as 0.
@@ -38,6 +38,10 @@ You can use the git cdn also.
 ```
 <script type="text/javascript" src="https://cdn.rawgit.com/fabiogoro/noisy/master/noisy.min.js"></script>
 ```
+
+## Testing
+
+You can run the tests at your own browser. You can access then in [this page](https://fabiogoro.github.io/noisy/tests)
 
 ## This is too much trouble...
 
