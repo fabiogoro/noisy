@@ -13,7 +13,7 @@
       <canvas class="visualizer"></canvas> 
     </div>
 
-    <script type="text/javascript" src="assets/noisy.js"></script>
+    <script type="text/javascript" src="assets/noisy.min.js"></script>
     <script type="text/javascript" src="assets/script.js"></script>
   </body>
 </html>

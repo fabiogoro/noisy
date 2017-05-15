@@ -7,7 +7,7 @@
     <div id="qunit"></div>
     <div id="qunit-fixture"></div>>>
     <script src="https://code.jquery.com/qunit/qunit-2.3.2.js"></script>
-    <script type="text/javascript" src="assets/noisy.js"></script>
+    <script type="text/javascript" src="assets/noisy.min.js"></script>
     <script type="text/javascript" src="assets/test.js"></script>
   </body>
 </html>
