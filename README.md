@@ -41,7 +41,7 @@ You can use the git cdn also.
 
 ## Testing
 
-You can run the tests at your own browser. You can access then in [this page](https://fabiogoro.github.io/noisy/tests)
+You can run the tests at your own browser. You can access then in [this page](https://fabiogoro.github.io/noisy/test)
 
 ## This is too much trouble...
 
