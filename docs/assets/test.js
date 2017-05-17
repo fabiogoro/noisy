@@ -108,6 +108,21 @@ QUnit.test( "Energy factor defines mean energy", function( assert ) {
   assert.ok(Math.abs(eb-0.5*Math.pow(0.001,2)*65536)<0.01, "Passed!");
 });
 
+QUnit.test( "Signal mean is 0", function( assert ) {
+  var n = new Noisy(audio_context); 
+  var node = n.createNoise();
+  var buffer = node.buffer.getChannelData(0);
+  mean = buffer.reduce(function(a,b){return a+b;})/65536;
+  assert.ok(Math.abs(mean)<0.001, "Passed!");
+});
+
+QUnit.test( "Output signal is real", function( assert ) {
+  var n = new Noisy(audio_context); 
+  var spec = n._noise_spectrum();
+  var sig = n._cnoise_block(spec);
+  assert.ok(Math.abs(sig[453])<0.001, "Passed!");
+});
+
 function freqbin(hz){
   var n = new Noisy(audio_context); 
   return 2*n.freqbin(hz);
