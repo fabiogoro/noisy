@@ -17,13 +17,13 @@ function start_web_audio(){
   master_gain = audio_context.createGain();
   compressor = audio_context.createDynamicsCompressor();
   compressor.connect(gain);
-  gain.gain.value = 0;
+  gain.gain.value = 1;
   gain.connect(master_gain);
   destination = gain;//compressor;
   master_gain.connect(audio_context.destination);
   
   // Create Noisy node...
-  n = new Noisy(audio_context); 
+  n = new Noisy(audio_context, 16384); 
   beat(440,3200,1); // This function creates noise in a range of the spectrum for a short time.
   //harmonic(440,1); // This function uses Noisy as an oscillator, making only one bin active.
   beat(440,440*3,1.5);
@@ -33,10 +33,12 @@ function start_web_audio(){
   beat(554.37,554.37*3,3.5);
   beat(554.37,554.37*6,4);
   beat(587.33,587.33*3,4.5);
-  node = n.createNoise();
-  node.connect(destination);
-  node.start(5);
-  gain.gain.linearRampToValueAtTime(1,5.05);
+  node = n.createNoiseProcessor(); // NoiseProcessor is better if noise is playing for a long time, but it is more CPU consuming though...
+  var g = audio_context.createGain();
+  g.gain.value = 0;
+  node.connect(g); // Noise processor won't start/stop, it gets connected and play. Control it with gain nodes.
+  g.connect(destination);
+  g.gain.setValueAtTime(1,5)
 
   // Draw spectrum...
   analyser = audio_context.createAnalyser();
@@ -57,12 +59,15 @@ function start_web_audio(){
 
 function beat(l, h, t){
   var b = n.createNoise(l,h); // Create the node.
-  b.start(t); // Make it play
-  gain.gain.linearRampToValueAtTime(1,t+0.05);
-  gain.gain.linearRampToValueAtTime(0.2,t+0.15);
-  gain.gain.linearRampToValueAtTime(0,t+0.50);
-  b.connect(destination); // Connect it, just like a regular node.
-  b.stop(t+0.50);
+  b.start();
+  var g = audio_context.createGain(); // Gain node simulating ADSR
+  g.gain.value = 0;
+  g.gain.linearRampToValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(1,t+0.05);
+  g.gain.linearRampToValueAtTime(0.2,t+0.15);
+  g.gain.linearRampToValueAtTime(0,t+0.50);
+  b.connect(g); // Connect it, just like a regular node.
+  g.connect(destination);
 }
 
 function harmonic(hz, t){

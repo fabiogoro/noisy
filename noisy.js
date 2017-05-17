@@ -1,9 +1,40 @@
-function Noisy(audio_context){
-  if(audio_context===undefined || audio_context.constructor!=AudioContext) throw new Error("Argument 1 is not an AudioContext.")
+// Noisy
+// audio_context is an AudioContext object
+// size is optional, should be power of two, the size of processing block.
+function Noisy(audio_context, size){
+  if(audio_context===undefined || audio_context.constructor!=AudioContext) throw new Error("Argument 1 is not an AudioContext.");
+  if(size===undefined) size = 65536;
+  if((size&size-1)!=0||size===0) throw new Error("Size is not power of 2");
   this.audio_context = audio_context;
-  this._size = 65536;
+  this._size = size;
   this._fft = new FFTJS(this._size);
 }
+
+// createNoiseProcessor
+// returns a ScriptProcessor node
+// bottom is optional, lower cutoff frequency
+// top is optional, higher cutoff frequency
+// gain is optional, 0 gain is silence, 1 gain makes a sine at interval [1,-1], default 0.1 (high values can cause clipping)
+// Warning: This can be CPU consuming as it creates a random array every *size* samples. Usually simple createNoise is preferred
+Noisy.prototype.createNoiseProcessor = function (bottom, top, gain){
+  if(this._size>16384) throw new Error("Block size is greater than 16384");
+  var processor = this.audio_context.createScriptProcessor(this._size, 0, 1);
+  var n = this;
+  processor.onaudioprocess = function(audioProcessingEvent) {
+    const spectrum = n._noise_spectrum(bottom, top, gain);
+    var block = new Float32Array(n._size);
+    block.set(n._noise_block(spectrum));
+    var noise_buffer = audioProcessingEvent.outputBuffer;
+    noise_buffer.copyToChannel(block,0);
+  }
+  return processor;
+}
+
+// createNoise
+// returns a BufferSource node
+// bottom is optional, lower cutoff frequency
+// top is optional, higher cutoff frequency
+// gain is optional, 0 gain is silence, 1 gain makes a sine at interval [1,-1], default 0.1 (high values can cause clipping)
 Noisy.prototype.createNoise = function (bottom, top, gain){
   const spectrum = this._noise_spectrum(bottom, top, gain);
   var block = new Float32Array(this._size);
@@ -52,6 +83,13 @@ Noisy.prototype._noise_spectrum = function (bottom, top, gain){
     }
   }
   return out;
+}
+
+Noisy.prototype._cnoise_block = function (spectrum){
+  const fft = this._fft;
+  const c = fft.createComplexArray();
+  fft.inverseTransform(c,spectrum);
+  return c;
 }
 
 Noisy.prototype._noise_block = function (spectrum){

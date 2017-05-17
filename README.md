@@ -29,7 +29,12 @@ If you let `createNoise` without parameters it will be plain white noise.
 If you make lower bound less than 0, it'll be set as 0.
 If you make upper bound greater than Nyquist frequency (sampleRate/2), it'll be set as the Nyquist frequency.
 
+`createNoise` creates a `size` samples block. It'll loop through those samples, so small blocks will create hearable patterns.
+
+`createNoiseProcessor` has same interface as `createNoise`, but it returns a ScriptProcessor that generates new samples every `size` samples, which can be a lot more CPU consuming. This avoids the 'hearable patterns' problem though.
+
 When creating `Noisy()` object, the argument is an AudioContext object. If nothing is passed, an exception is thrown.
+A second argument can be given, this will be a power of 2 used as the processing block size. Bigger block gives better frequency resolution and worse performance. 65536 is maximum size. createNoiseProcessor can process 16384 maximum block size.
 
 Don't forget to include the lib in your project. A minified version can be downloaded [here](https://raw.githubusercontent.com/fabiogoro/noisy/master/noisy.min.js).
 
